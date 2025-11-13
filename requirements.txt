@@ -1,0 +1,9 @@
+flask
+pandas
+openpyxl
+selenium
+requests 
+pillow
+pytesseract
+opencv-python-headless
+gunicorn
