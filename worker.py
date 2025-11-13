@@ -215,11 +215,10 @@ class SeleniumWorker:
     #     self.wait = WebDriverWait(self.driver, 20)
     def _start_driver(self):
         from selenium.webdriver.chrome.service import Service
-        from webdriver_manager.chrome import ChromeDriverManager
         
         chrome_options = Options()
         
-        # Render.com specific options
+        # Headless mode for cloud deployment
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
@@ -237,16 +236,12 @@ class SeleniumWorker:
         }
         chrome_options.add_experimental_option("prefs", prefs)
         
-        # For Render environment
-        if os.environ.get('RENDER'):
-            chrome_options.binary_location = "/usr/bin/chromium"
-            chrome_options.add_argument("--disable-extensions")
-            service = Service(executable_path="/usr/bin/chromedriver")
-            self.driver = webdriver.Chrome(service=service, options=chrome_options)
-        else:
-            # Local development
-            self.driver = webdriver.Chrome(options=chrome_options)
+        # Docker container paths
+        chrome_options.binary_location = "/usr/bin/chromium"
         
+        # Use system chromedriver in Docker
+        service = Service(executable_path="/usr/bin/chromedriver")
+        self.driver = webdriver.Chrome(service=service, options=chrome_options)
         self.wait = WebDriverWait(self.driver, 20)
 
     def _get_captcha_base64(self, img_elem):
@@ -464,3 +459,4 @@ class SeleniumWorker:
             time.sleep(1)
 
         return None
+
